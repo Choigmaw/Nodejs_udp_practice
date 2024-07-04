@@ -1,5 +1,6 @@
 const { timeStamp } = require('console');
-const dgram = require('dgram');
+const dgram = require('dgram')
+
 const client = dgram.createSocket('udp4');
 let message = Buffer.from('Default Message');
 
@@ -32,14 +33,18 @@ function formatTimeStamp(timeStamp, dateSeparator = "-", timeSeparator = ":") {
     // 형식화된 문자열 생성
     var formattedDateTime = `${year}${dateSeparator}${month}${dateSeparator}${day} ${hour}${timeSeparator}${minute}${timeSeparator}${second}`;
 
-    return formattedDateTime;
+    // return formattedDateTime;
+    return second
 }
 
 
 // setInterval을 사용해서 일정 간격마다 전송
 setInterval(() => {
     var timeStamp = new Date();
-    message = formatTimeStamp(timeStamp)
+    var second = formatTimeStamp(timeStamp);
+    var randNum = Math.floor(Math.random() * 100); 
+    var message = `${second} ${randNum}`;
+
     client.send(message, 41234, 'localhost', (err) => {
         if (err) {
             console.error('Error sending message : ', err);
