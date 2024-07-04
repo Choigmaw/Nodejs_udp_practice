@@ -1,5 +1,5 @@
 const { timeStamp } = require('console');
-const dgram = require('dgram')
+const dgram = require('dgram');
 
 const client = dgram.createSocket('udp4');
 let message = Buffer.from('Default Message');

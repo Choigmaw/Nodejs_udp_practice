@@ -1,0 +1,6 @@
+file.txt merge=ours
+
+```plaintext
+# file.txt의 병합 충돌을 항상 사용자에게 알림
+file.txt merge=ours
+```
