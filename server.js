@@ -40,7 +40,7 @@ const queue = new Queue();
 
 server.on('message', (msg, rinfo) => {
     const receivedTime = Date.now();
-    const messageString = msg.toString('utf-8');
+    const messageString = msg.readUint32LE(0);
     queue.add({ message: messageString, rinfo, receivedTime }); // 타임스탬프와 함께 메시지 저장
 
     console.log(`Message added to queue: ${messageString} from ${rinfo.address}:${rinfo.port}`);
@@ -51,27 +51,43 @@ setInterval(() => {
     let under50 = 0;
     let item;
 
+    // while (queue.size() > 0) {
+    //     item = queue.popleft();
+    //     const parts = item.message.split(' ');
+    //     const randNum = parseInt(parts[parts.length - 1], 10); // 메시지의 마지막 숫자 추출 
+
+    //     if (randNum >= 50) {
+    //         console.log(`(randNum >= 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
+    //         over50++;
+    //     } else {
+    //         console.log(`(randNum < 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
+    //         under50++;
+    //     }
+    // }
+
     while (queue.size() > 0) {
         item = queue.popleft();
-        const parts = item.message.split(' ');
-        const randNum = parseInt(parts[parts.length - 1], 10); // 메시지의 마지막 숫자 추출 
-
-        if (randNum >= 50) {
-            console.log(`(randNum >= 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
+        console.log(`Dequeued item: ${JSON.stringify(item)}`);
+        if (item.message >= 50) {
+            console.log(`(randNum >= 50): ${item.randNum} from ${item.rinfo.address}:${item.rinfo.port}`);
             over50++;
         } else {
-            console.log(`(randNum < 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
+            console.log(`(randNum < 50): ${item.randNum} from ${item.rinfo.address}:${item.rinfo.port}`);
             under50++;
         }
     }
 
     if (item) { // 마지막 처리된 아이템이 있을 경우
-        const responseMessage = Buffer.from(`50보다 큰 값 ${over50}개, 50보다 작은 값 ${under50}개`);
+        const responseMessage = Buffer.alloc(8);
+        responseMessage.writeUint32LE(over50, 0);
+        responseMessage.writeUInt32LE(under50, 4);
+
         server.send(responseMessage, item.rinfo.port, item.rinfo.address, (err) => {
             if (err) {
                 console.error('Error sending response:', err);
             } else {
                 console.log('Response sent to client');
+                console.log(`${over50}, ${under50}`);
             }
         });
     }
