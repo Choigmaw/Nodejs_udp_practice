@@ -67,12 +67,13 @@ setInterval(() => {
 
     while (queue.size() > 0) {
         item = queue.popleft();
+        // Dequeued item: {"message":1,"rinfo":{"address":"127.0.0.1","family":"IPv4","port":49159,"size":4},"receivedTime":1720082838052}
         console.log(`Dequeued item: ${JSON.stringify(item)}`);
         if (item.message >= 50) {
-            console.log(`(randNum >= 50): ${item.randNum} from ${item.rinfo.address}:${item.rinfo.port}`);
+            console.log(`(randNum >= 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
             over50++;
         } else {
-            console.log(`(randNum < 50): ${item.randNum} from ${item.rinfo.address}:${item.rinfo.port}`);
+            console.log(`(randNum < 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
             under50++;
         }
     }
