@@ -54,3 +54,7 @@ setInterval(() => {
         }
     });
 }, 1000);
+
+client.on('message', (msg, rinfo) => {
+    console.log(`Client received: ${msg} from ${rinfo.address}:${rinfo.port}`);
+})

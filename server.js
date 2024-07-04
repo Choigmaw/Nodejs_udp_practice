@@ -47,22 +47,35 @@ server.on('message', (msg, rinfo) => {
 });
 
 setInterval(() => {
+    let over50 = 0;
+    let under50 = 0;
+    let item;
+
     while (queue.size() > 0) {
-        const item = queue.popleft();
-        const currentTime = Date.now();
-        // const elapsedTime = (currentTime - item.receivedTime) / 1000; // 경과 시간 (초 단위)
+        item = queue.popleft();
         const parts = item.message.split(' ');
-        const randNum = parseInt(parts[parts.length - 1], 10); // 메시지의 마지막 숫자 추출
-        
-        // 랜덤 값에 따라 다른 행동 수행
+        const randNum = parseInt(parts[parts.length - 1], 10); // 메시지의 마지막 숫자 추출 
+
         if (randNum >= 50) {
-            console.log(`Processing message (randNum >= 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
-            // 필요한 작업 수행
+            console.log(`(randNum >= 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
+            over50++;
         } else {
-            console.log(`Skipping message (randNum < 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
-            // 다른 작업 수행 또는 메시지 무시
+            console.log(`(randNum < 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
+            under50++;
         }
     }
+
+    if (item) { // 마지막 처리된 아이템이 있을 경우
+        const responseMessage = Buffer.from(`50보다 큰 값 ${over50}개, 50보다 작은 값 ${under50}개`);
+        server.send(responseMessage, item.rinfo.port, item.rinfo.address, (err) => {
+            if (err) {
+                console.error('Error sending response:', err);
+            } else {
+                console.log('Response sent to client');
+            }
+        });
+    }
+
 }, 5000); // 5초마다 큐를 확인하고 처리
 
 server.bind(41234, () => {
