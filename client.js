@@ -33,23 +33,24 @@ function formatTimeStamp(timeStamp, dateSeparator = "-", timeSeparator = ":") {
     // 형식화된 문자열 생성
     var formattedDateTime = `${year}${dateSeparator}${month}${dateSeparator}${day} ${hour}${timeSeparator}${minute}${timeSeparator}${second}`;
 
-    // return formattedDateTime;
-    return second
+    return formattedDateTime;
+
 }
 
 
 // setInterval을 사용해서 일정 간격마다 전송
 setInterval(() => {
     var timeStamp = new Date();
-    var second = formatTimeStamp(timeStamp);
+    var formattedDateTime = formatTimeStamp(timeStamp);
     var randNum = Math.floor(Math.random() * 100); 
-    var message = `${second} ${randNum}`;
+    var messageString = `${formattedDateTime} ${randNum}`;
+    var messageBuffer = Buffer.from(messageString, 'utf-8');
 
-    client.send(message, 41234, 'localhost', (err) => {
+    client.send(messageBuffer, 41234, 'localhost', (err) => {
         if (err) {
             console.error('Error sending message : ', err);
         } else {
-            console.log(`Message sent to server : ${message}`);
+            console.log(`Message sent to server : ${messageString}`);
         }
     });
 }, 1000);
