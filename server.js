@@ -39,13 +39,32 @@ class Queue {
 const queue = new Queue();
 
 server.on('message', (msg, rinfo) => {
-    queue.add(msg);
-    if (queue.size() === 2) {
-        console.log('큐에 2개 쌓임');
-        queue.popleft();
-        // 템플릿 리터럴을 사용하려면 백틱으로 사용해야함, 작은 따옴표가 아님!
-        console.log(`Server received: ${msg} from ${rinfo.address}:${rinfo.port}`);
-    }
+    const receivedTime = Date.now();
+    const messageString = msg.toString('utf-8');
+    queue.add({ message: messageString, rinfo, receivedTime }); // 타임스탬프와 함께 메시지 저장
+
+    console.log(`Message added to queue: ${messageString} from ${rinfo.address}:${rinfo.port}`);
 });
 
-server.bind(41234)
+setInterval(() => {
+    while (queue.size() > 0) {
+        const item = queue.popleft();
+        const currentTime = Date.now();
+        // const elapsedTime = (currentTime - item.receivedTime) / 1000; // 경과 시간 (초 단위)
+        const parts = item.message.split(' ');
+        const randNum = parseInt(parts[parts.length - 1], 10); // 메시지의 마지막 숫자 추출
+        
+        // 랜덤 값에 따라 다른 행동 수행
+        if (randNum >= 50) {
+            console.log(`Processing message (randNum >= 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
+            // 필요한 작업 수행
+        } else {
+            console.log(`Skipping message (randNum < 50): ${item.message} from ${item.rinfo.address}:${item.rinfo.port}`);
+            // 다른 작업 수행 또는 메시지 무시
+        }
+    }
+}, 5000); // 5초마다 큐를 확인하고 처리
+
+server.bind(41234, () => {
+    console.log('Server is listening on port 41234');
+});
