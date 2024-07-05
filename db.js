@@ -1,13 +1,15 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
+const dotenv = require('dotenv');
+
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'choigmaw0320',
+    database: 'test'
+});
 
 function connectToDatabase(callback) {
-    const connection = mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'test'
-    });
-
+    
     connection.connect((err) => {
         if (err) {
             console.error('Error connecting to database:', err);

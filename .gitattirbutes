@@ -1,9 +1,5 @@
+# file.txt의 병합 충돌을 항상 "ours" 전략으로 처리
 file.txt merge=ours
 
-```plaintext
-# file.txt의 병합 충돌을 항상 사용자에게 알림
-file.txt merge=ours
-```
-```text
+# 모든 텍스트 파일의 엔드 오브 라인을 LF로 설정
 * text eol=lf
-```
