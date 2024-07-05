@@ -22,7 +22,7 @@ function createClient() {
         const over50 = msg.readUInt32LE(0);
         const under50 = msg.readUInt32LE(4);
     
-        console.log(`(클라이언트) 받은 데이터: 50보다 큰 값 ${over50}개, 50보다 작은 값 ${under50}개 from ${rinfo.address}:${rinfo.port}`);
+        console.log(`(클라이언트) 받은 데이터: 50이상 ${over50}개, 50미만 ${under50}개 전송 from ${rinfo.address}:${rinfo.port}`);
     });
 }
 
